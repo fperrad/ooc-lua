@@ -25,6 +25,7 @@ main: func(args: ArrayList<String>) {
         exit(0)
 //        lexer setInput(FileReader new(stdin), "=stdin")
 
+    lexer shebang()
     lexer next()
     lexer printToken()
     while (lexer t token != TK_EOS) {

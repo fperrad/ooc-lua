@@ -2,6 +2,7 @@
 /.libs
 /*_tmp
 *.html
+*.out
 
 LineLength
 HardTabs
@@ -11,3 +12,4 @@ CamelCase
 Parentheses
 
 lexico
+ooc-luac

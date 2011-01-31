@@ -51,6 +51,14 @@ Lexer: class {
         return lookahead token
     }
 
+    shebang: func {
+        if (current == '#') {
+            while (current != '\n')
+                _next()
+            _incLineNumber()
+        }
+    }
+
     syntaxError: func(msg: String) {
         _error(msg, t token)
     }
@@ -144,7 +152,7 @@ Lexer: class {
                         }
                     }
                     /* else short comment */
-                    while ((current == '\n' || current == '\r') && current != -1)
+                    while (!(current == '\n' || current == '\r') && current != -1)
                         _next() /* skip until end of line (or end of file) */
                 case '[' =>  /* long string or simply '[' */
                     sep := _skipSep()
@@ -243,12 +251,13 @@ Lexer: class {
 
     _next: func -> Int {
         current = z hasNext?() ? z read() as Int : -1
-        if (current == 0) // workaround
+        if (current == 0 && ! z hasNext?())
             current = -1
         return current
     }
 
     _checkNext: func(set: String) -> Bool {
+//        if (current == '\0' || ! set contains?(current as Char))
         if (! set contains?(current as Char))
             return false
         buff add(current as Char)
