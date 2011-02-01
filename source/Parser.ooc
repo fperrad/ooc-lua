@@ -68,13 +68,12 @@ init_exp: inline func(e: ExpDesc@, k: ExpKind, info: Int) {
 
 
 /* state needed to generate code for a given function */
-FuncState: class {
+FuncState: final class {
     f: LuaProto  /* current function header */
     h: LuaTable  /* table to find (and reuse) elements in `k' */
     prev: FuncState  /* enclosing function */
     ls: Parser  /* lexical state */
     bl: BlockCnt*  /* chain of current blocks */
-    // pc: Int  /* next position to code (equivalent to `ncode') */ --> f code getSize()
     lasttarget: Int  /* `pc' of last `jump target' */
     jpc: Int  /* list of pending jumps to `pc' */
     freereg: Int  /* first free register */
@@ -141,11 +140,13 @@ FuncState: class {
     }
 
     removevars: func(tolevel: Int) {
+        pc := f code getSize()
         actvar := ls actvar
-        for (i in 0 .. tolevel) {
-            idx := actvar removeAt(actvar lastIndex())
-            pvar := getlocvar(idx)
-            pvar@ endpc = f code getSize()
+        while (nactvar > tolevel) {
+            nactvar -= 1
+            pvar := getlocvar(nactvar)
+            pvar@ endpc = pc
+            actvar removeAt(actvar lastIndex())
         }
     }
 
@@ -239,10 +240,10 @@ FuncState: class {
 
 
     luaK_jump: func -> Int {
-        _jpc := jpc  /* save list of jumps to here */
+        save := jpc  /* save list of jumps to here */
         jpc = NO_JUMP
         j := luaK_codeABx(OpCode OP_JMP, 0, NO_JUMP + MAXARG_sBx)
-        luaK_concat(j&, _jpc)  /* keep them on hold */
+        luaK_concat(j&, save)  /* keep them on hold */
         return j
     }
 
@@ -968,8 +969,14 @@ FuncState: class {
 
     luaK_posfix: func(op: BinOpr, e1, e2: ExpDesc@, line: Int) {
         match {
-            case op == BinOpr OPR_AND ||
-                 op == BinOpr OPR_OR =>
+            case op == BinOpr OPR_AND =>
+                version(debug) {
+                    assert(e1 t == NO_JUMP)  /* list must be closed */
+                }
+                luaK_dischargevars(e2&)
+                luaK_concat(e2 f&, e1 f)
+                e1 = e2
+            case op == BinOpr OPR_OR =>
                 version(debug) {
                     assert(e1 f == NO_JUMP)  /* list must be closed */
                 }
@@ -1092,7 +1099,7 @@ ConsControl: cover {
 
 
 
-Parser: class extends Lexer {
+Parser: final class extends Lexer {
     fs: FuncState  /* `FuncState' is private to the parser */
     actvar: ArrayList<UInt16>  /* list of all active local variables */
 

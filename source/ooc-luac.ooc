@@ -283,7 +283,7 @@ extend LuaProto {
         "locals (%d) for %p:" format(sizelocvars, locvars data) println()
         for (i in 0 .. sizelocvars) {
             var := locvars get(i)
-            "\t%d\t%s\t%d\t%d" format(i, var varname, var startpc, var endpc) println()
+            "\t%d\t%s\t%d\t%d" format(i, var varname, var startpc + 1, var endpc + 1) println()
         }
         sizeupvalues := upvalues getSize()
         "upvalues (%d) for %p:" format(sizeupvalues, upvalues data) println()

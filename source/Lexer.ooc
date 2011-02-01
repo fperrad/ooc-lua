@@ -173,11 +173,11 @@ Lexer: class {
                         return TK_EQ
                     }
                 case '<' =>
-                    next()
+                    _next()
                     if (current != '=')
                         return '<' as Int
                     else {
-                        next()
+                        _next()
                         return TK_LE
                     }
                 case '>' =>
@@ -224,10 +224,12 @@ Lexer: class {
                         _readNumeral(tok&)
                         return TK_NUMBER
                     }
-                    else if (current as Char alpha?()) {  /* identifier or reserved word? */
+                    else if (current as Char alpha?() ||  /* identifier or reserved word? */
+                             current == '_') {
                         buff add(current as Char)
                         _next()
-                        while (current as Char alphaNumeric?()) {
+                        while (current as Char alphaNumeric?() ||
+                               current == '_') {
                             buff add(current as Char)
                             _next()
                         }

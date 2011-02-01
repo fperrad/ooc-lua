@@ -177,10 +177,10 @@ LuaProto: class extends LuaAny {
             for (i in 0 .. n) {
                 var := locvars get(i)
                 _dumpString(w, var varname)
-                n = var startpc
-                w write(n& as Char*, Int size)
-                n = var endpc
-                w write(n& as Char*, Int size)
+                pc := var startpc
+                w write(pc& as Char*, Int size)
+                pc = var endpc
+                w write(pc& as Char*, Int size)
             }
             n = upvalues getSize()
             w write(n& as Char*, Int size)
