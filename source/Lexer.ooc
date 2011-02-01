@@ -342,9 +342,10 @@ Lexer: class {
             }
         }
         buff add(current as Char)  /* skip delimiter */
-       _next()
+        _next()
         tmp := buff slice(1, buff getSize() -2)
-        tok str = String new(tmp data as CString, tmp getSize())
+        n := tmp getSize()
+        tok str = (n != 0) ? String new(tmp data as CString, n) : ""
     }
 
     _readHexaEsc: func() -> Char {

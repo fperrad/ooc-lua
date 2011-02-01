@@ -1598,22 +1598,22 @@ Parser: final class extends Lexer {
 ** local value in a safe place and use this safe copy in the previous
 ** assignment.
 */
-    _check_conflict: func(lh: LHS_assign@, v: ExpDesc@) {
+    _check_conflict: func(lh: LHS_assign*, v: ExpDesc@) {
         extra := fs freereg  /* eventual position to save local variable */
         conflict := false
-        while (lh&) {
+        while (lh) {
             /* conflict in table 't'? */
-            if (lh v ind_vt == v k && lh v ind_t == v info) {
+            if (lh@ v ind_vt == v k && lh@ v ind_t == v info) {
                 conflict = true
-                lh v ind_vt = ExpKind VLOCAL
-                lh v ind_t = extra  /* previous assignment will use safe copy */
+                lh@ v ind_vt = ExpKind VLOCAL
+                lh@ v ind_t = extra  /* previous assignment will use safe copy */
             }
             /* conflict in index 'idx'? */
-            if (v k == ExpKind VLOCAL && lh v ind_idx == v info) {
+            if (v k == ExpKind VLOCAL && lh@ v ind_idx == v info) {
                 conflict = true
-                lh v ind_idx = extra  /* previous assignment will use safe copy */
+                lh@ v ind_idx = extra  /* previous assignment will use safe copy */
             }
-            lh = lh prev@
+            lh = lh@ prev
         }
         if (conflict) {
             op := (v k == ExpKind VLOCAL) ? OpCode OP_MOVE : OpCode OP_GETUPVAL
