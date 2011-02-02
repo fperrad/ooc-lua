@@ -267,7 +267,35 @@ extend LuaProto {
                 n := sprintf(buff, "%.14g", cst as LuaNumber v)
                 String new(buff, n) print()
             case LuaString =>
-                "\"%s\"" format(cst as LuaString v) print()
+                str := cst as LuaString v
+                "\"" print()
+                for (c in str)
+                    match (c) {
+                        case '"' =>
+                            "\\\"" print()
+                        case '\\' =>
+                            "\\\\" print()
+                        case '\a' =>
+                            "\\a" print()
+                        case '\b' =>
+                            "\\b" print()
+                        case '\f' =>
+                            "\\f" print()
+                        case '\n' =>
+                            "\\n" print()
+                        case '\r' =>
+                            "\\r" print()
+                        case '\t' =>
+                            "\\t" print()
+                        case '\v' =>
+                            "\\v" print()
+                        case =>
+                            if (c printable?())
+                                c print()
+                            else
+                                "\\%03d" format(c) print()
+                    }
+                "\"" print()
         }
     }
 

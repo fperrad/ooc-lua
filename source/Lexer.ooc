@@ -469,7 +469,7 @@ Lexer: class {
             }
         }
         if (tok&) {
-            tmp := buff slice(2 + sep, buff getSize() - 2*(2 + sep))
+            tmp := buff slice(2 + sep, buff getSize() - sep - 3)
             tok str = String new(tmp data as CString, tmp getSize())
         }
     }

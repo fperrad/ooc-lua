@@ -191,14 +191,11 @@ LuaProto: class extends LuaAny {
 
     _dumpString: func(w: Writer, str: String) {
         len := str length()
-        if (len == 0)
-            w write(len& as Char*, Int size)
-        else {
-            len1 := len + 1
-            w write(len1& as Char*, Int size)
+        len1 := len + 1
+        w write(len1& as Char*, Int size)
+        if (len != 0)
             w write(str, len)
-            w write(0 as Char)
-        }
+        w write(0 as Char)
     }
 }
 

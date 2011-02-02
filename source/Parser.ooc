@@ -185,7 +185,7 @@ FuncState: final class {
     markupval: func(level: Int) {
         _bl := bl
         while (_bl) {
-            if (_bl@ nactvar > level)
+            if (!(_bl@ nactvar > level))
                 break
             _bl = _bl@ previous
         }
@@ -872,7 +872,7 @@ FuncState: final class {
             case OpCode OP_DIV =>
                 e1 nval = e1 nval / e2 nval
             case OpCode OP_MOD =>
-                e1 nval = e1 nval mod(e2 nval)
+                e1 nval = e1 nval - (e1 nval / e2 nval) floor() * e2 nval
             case OpCode OP_POW =>
                 e1 nval = e1 nval pow(e2 nval)
             case =>
@@ -1020,9 +1020,9 @@ FuncState: final class {
             case op == BinOpr OPR_NE =>
                 _codecomp(OpCode OP_EQ, 0, e1&, e2&)
             case op == BinOpr OPR_GT =>
-                _codecomp(OpCode OP_LE, 0, e1&, e2&)
-            case op == BinOpr OPR_GE =>
                 _codecomp(OpCode OP_LT, 0, e1&, e2&)
+            case op == BinOpr OPR_GE =>
+                _codecomp(OpCode OP_LE, 0, e1&, e2&)
             case =>
                 version(debug) {
                     assert(false)
