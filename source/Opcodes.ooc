@@ -343,6 +343,10 @@ OP_MODES := const [
 /* number of list items to accumulate before a SETLIST instruction */
 LFIELDS_PER_FLUSH := const 50
 
+/* option for multiple returns in 'lua_pcall' and 'lua_call' */
+LUA_MULTRET := const -1
+
+
 /*
 ** converts an integer to a "floating point byte", represented as
 ** (eeeeexxx), where the real value is (1xxx) * 2^(eeeee - 1) if

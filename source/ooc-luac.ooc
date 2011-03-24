@@ -1,4 +1,5 @@
 
+import io/FileReader
 import io/FileWriter
 import structs/ArrayList
 
@@ -12,7 +13,21 @@ main: func(args: ArrayList<String>) {
     i := doargs(args)
     if (n == i)
         usage("no input files given")
-    pmain(args slice(i .. n - 1))
+
+    args = args slice(i .. n - 1)
+    parser := Parser new()
+    l := ArrayList<LuaProto> new()
+    for (i in 0 .. args getSize())
+        l add(parser loadfile(args get(i)))
+    proto := combine(l)
+    if (listing)
+        proto printFunction(listing > 1)
+    if (dumping) {
+        writer := FileWriter new(output)
+        proto dumpHeader(writer)
+        proto dump(writer, stripping)
+        writer close()
+    }
 }
 
 progname := "ooc-luac"
@@ -80,25 +95,31 @@ usage: func(message: String) {
     exit(EXIT_FAILURE)
 }
 
-pmain: func(args: ArrayList<String>) {
-    parser := Parser new()
-    l := ArrayList<LuaProto> new()
-    for (i in 0 .. args getSize())
-        l add(parser loadfile(args get(i)))
-    proto := combine(l)
-    if (listing)
-        proto printFunction(listing > 1)
-    if (dumping) {
-        writer := FileWriter new(output)
-        proto dumpHeader(writer)
-        proto dump(writer, stripping)
-        writer close()
-    }
-}
-
 combine: func(l: ArrayList<LuaProto>) -> LuaProto {
     // TODO
     return l get(0)
+}
+
+extend Parser {
+    loadfile: func(filename: String) -> LuaProto {
+        srcname: String
+        reader: FileReader
+        if (filename equals?("-")) {
+            srcname = "=stdin"
+//            reader = FileReader new(stdin)
+        }
+        else {
+            srcname = "@" + filename
+            reader = FileReader new(filename)
+        }
+        setInput(reader, srcname)
+        shebang()
+//        if (_testnext(0x1b)) {
+//            return undump
+//        }
+//        else
+            return parse(ArrayList<UInt16> new())
+    }
 }
 
 extend LuaProto {

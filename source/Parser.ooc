@@ -1,5 +1,4 @@
 
-import io/FileReader
 import math
 import structs/ArrayList
 
@@ -1104,27 +1103,6 @@ Parser: final class extends Lexer {
     actvar: ArrayList<UInt16>  /* list of all active local variables */
 
     init: func {}
-
-
-    loadfile: func(filename: String) -> LuaProto {
-        srcname: String
-        reader: FileReader
-        if (filename equals?("-")) {
-            srcname = "=stdin"
-//            reader = FileReader new(stdin)
-        }
-        else {
-            srcname = "@" + filename
-            reader = FileReader new(filename)
-        }
-        setInput(reader, srcname)
-        shebang()
-//        if (_testnext(0x1b)) {
-//            return undump
-//        }
-//        else
-            return parse(ArrayList<UInt16> new())
-    }
 
 
     parse: func(=actvar) -> LuaProto {
@@ -2237,9 +2215,6 @@ UnOpr: enum {
 /* maximum number of local variables per function (must be smaller
    than 250, due to the bytecode format) */
 MAXVARS := const 200
-
-/* option for multiple returns in 'lua_pcall' and 'lua_call' */
-LUA_MULTRET := const -1
 
 
 /* maximum stack for a Lua function */

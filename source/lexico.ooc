@@ -22,7 +22,7 @@ main: func(args: ArrayList<String>) {
         lexer setInput(FileReader new(fname), fname)
     }
     else
-        exit(0)
+        assert(false)
 //        lexer setInput(FileReader new(stdin), "=stdin")
 
     lexer shebang()
