@@ -69,7 +69,7 @@ init_exp: inline func(e: ExpDesc@, k: ExpKind, info: Int) {
 /* state needed to generate code for a given function */
 FuncState: final class {
     f: LuaProto  /* current function header */
-    h: LuaTable  /* table to find (and reuse) elements in `k' */
+    h: Table  /* table to find (and reuse) elements in `k' */
     prev: FuncState  /* enclosing function */
     ls: Parser  /* lexical state */
     bl: BlockCnt*  /* chain of current blocks */
@@ -83,7 +83,7 @@ FuncState: final class {
         f = LuaProto new()
         f source = ls source
         f maxstacksize = 2  /* registers 0/1 are always valid */
-        h = LuaTable new()
+        h = Table new(0, 0)
         bl = null
         lasttarget = 0
         jpc = NO_JUMP
@@ -471,17 +471,17 @@ FuncState: final class {
 
 
     _addk: func(key, v: LuaAny) -> Int {
-        if (h v contains?(key)) {
-            n := h v get(key) as LuaNumber
-            k := n v as Int
-            //if (f k[k] rawequal(v))
+        n := h get(key)
+        if (n) {
+            k := n as LuaNumber v as Int
+            if (f k get(k) eq(v))
                 return k
                 /* else may be a collision (e.g., between 0.0 and "\0\0\0\0\0\0\0\0");
                    go through and create a new entry for this value */
         }
         /* constant not found; create a new entry */
         nk := f k getSize()
-        h v put(key, LuaNumber new(nk))
+        h set(key, LuaNumber new(nk))
         f k add(v)
         return nk
     }
@@ -512,9 +512,8 @@ FuncState: final class {
 
 
     _nilK: func -> Int {
-        v := LuaNil new()
-        /* cannot use nil as key; instead use table itself to represent nil */
-        return _addk(h, v)
+        o := LuaNil new()
+        return _addk(o, o)
     }
 
 
