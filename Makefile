@@ -4,12 +4,12 @@ EXE := ooc-luac lexico
 all: $(EXE)
 
 lexico: $(wildcard source/*.ooc)
-#	rock -g -noclean -sourcepath=source $@
-	rock -sourcepath=source $@
+#	rock -g --noclean --sourcepath=source $@
+	rock --sourcepath=source $@
 
 ooc-luac: $(wildcard source/*.ooc)
-	rock -g -noclean -sourcepath=source -Ddebug $@
-#	rock -sourcepath=source -Ddebug $@
+	rock -g --noclean --sourcepath=source -Ddebug $@
+#	rock --sourcepath=source -Ddebug $@
 
 #test:
 #	prove t/*.t
@@ -26,7 +26,7 @@ CODING_STD := \
 #export OOC_LINE_LENGTH=100
 
 codingstd: ../ooc-codingstd
-	prove --exec="rock -r -sourcepath=../ooc-codingstd/source" $(CODING_STD)
+	prove --exec="rock -r --sourcepath=../ooc-codingstd/source" $(CODING_STD)
 
 ../ooc-codingstd:
 	cd .. && git clone git://github.com/fperrad/ooc-codingstd.git
